@@ -5,7 +5,7 @@ knitr::opts_chunk$set(
 )
 
 ## ----setup, message=FALSE, warning=FALSE--------------------------------------
-library(smrid)
+library(bonuslab)
 library(caret)
 library(MASS)
 library(leaps)
@@ -25,7 +25,7 @@ forward_mod <- train(medv ~ ., data = train, method = "leapForward")
 
 ## ----step3c, message=FALSE----------------------------------------------------
 rdg_reg <- list(type = "Regression",
-                library = "smrid",
+                library = "bonuslab",
                 loop = NULL)
 
 rdg_reg$parameters <- data.frame(parameter = c("lambda"),
@@ -66,7 +66,7 @@ RMSE(ridge_pred, test$medv)
 library(nycflights13)
 library(tidyverse)
 library(caret)
-library(smrid)
+library(bonuslab)
 
 # Loading and merging the data sets flights and weather
 df_flights <- nycflights13::flights
