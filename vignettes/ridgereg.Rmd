@@ -1,0 +1,164 @@
+---
+title: "ridgereg"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ridgereg}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## 1.2 Boston Housing
+
+**Step 1:** Load all the necessary packages.
+
+```{r setup, message=FALSE, warning=FALSE}
+library(smrid)
+library(caret)
+library(MASS)
+library(leaps)
+set.seed(1234)
+```
+
+**Step 2:** Load and divide the BostonHousing data into a test and a training set.
+
+```{r step2, message=FALSE}
+df <- Boston
+index <- createDataPartition(df$crim, times = 1, p = 0.8, list = FALSE)
+train <- df[index,]
+test <- df[-index,]
+```
+
+**Step 3:** Use the training data to fit
+
+**a)** a linear regression model
+
+```{r step3a, message=FALSE}
+lm_mod <- train(medv ~ ., data = train, method = "lm")
+```
+
+**b)** a linear regression model with forward selection of covariates
+
+```{r step3b, message=FALSE}
+forward_mod <- train(medv ~ ., data = train, method = "leapForward")
+```
+
+**c)** a ridge regression model using the ridgereg() function and find the best hyperparameter value for lambda using 10-fold cross-validation.
+
+```{r step3c, message=FALSE}
+rdg_reg <- list(type = "Regression",
+                library = "smrid",
+                loop = NULL)
+
+rdg_reg$parameters <- data.frame(parameter = c("lambda"),
+                      class = c("numeric"),
+                      label = c("Lambda"))
+
+rdg_reg$grid <- function(x, y, len = NULL, search = "grid") {
+  out <- expand.grid(lambda = seq(from = 0, to = 1, by = 0.1))
+  out
+}
+
+rdg_reg$fit <- function(x, y, wts, param, lev, last, weights, classProbs, ...) { 
+  df <- as.data.frame(cbind(x, y))
+  mod_formula <- as.formula(paste0("y~", paste(colnames(df)[1:(ncol(df)-1)], collapse = "+")))
+  mod <- ridgereg(data = df, formula = mod_formula, lambda = param$lambda)
+}
+
+rdg_reg$predict <- function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+  modelFit$predict(modelFit, newdata)
+}
+
+rdg_reg$prob <- list(NULL)
+
+ridge_mod <- train(medv ~ ., data = train, 
+                   method = rdg_reg,
+                   trControl = trainControl(method = "repeatedcv", repeats = 3))
+```
+
+The λ value that results in the lowest RMSE with the training dataset is 	λ=1.
+
+**Step 4:** Evaluate the performance of all three models on the test dataset.
+
+```{r step4}
+lm_pred <- predict(lm_mod, test)
+forward_pred <- predict(forward_mod, test)
+ridge_pred <- predict(ridge_mod, test)
+
+RMSE(lm_pred, test$medv)
+RMSE(forward_pred, test$medv)
+RMSE(ridge_pred, test$medv)
+```
+
+The ridge regression model results in the lowest RMSE, and hence fits the test dataset best. The linear regression model where the covariates were selected with forward selection is slightly worse in terms of RMSE, however the model contains fewer covariates and might therefore be easier to understand and interpret.
+
+## 1.2.1 Predictive modeling of flight delays using ridgereg()
+
+**Step 1:** Load all the necessary packages and data sets.
+
+```{r step2_1, message=FALSE}
+library(nycflights13)
+library(tidyverse)
+library(caret)
+library(smrid)
+
+# Loading and merging the data sets flights and weather
+df_flights <- nycflights13::flights
+df_weather <- nycflights13::weather
+```
+
+**Step 2:** Merge the data sets, remove the variables that are belivied to have little predictive power and create interaction effects.
+
+```{r step2_2, message=FALSE}
+df <- merge(df_flights, df_weather, 
+            by = c("time_hour", "origin", "day", "hour", "month", "year"), 
+            all.x = TRUE)
+
+df <- df[,-c(1,2,6,10,13,14,15,16,17,19,25)]
+df <- df[complete.cases(df),]
+
+df$wind_dir_t_wind_speed <- df$wind_dir * df$wind_speed
+df$temp_t_humid <- df$temp * df$humid
+df$wind_speed_t_humid <- df$wind_speed * df$humid
+```
+
+**Step 3:** Use the caret package to divide the data into three subsets; training (80%), validation (15%), and test (5%).
+
+```{r step2_3, message=FALSE}
+ind1 <- createDataPartition(df$day, p = 0.05, list = FALSE)
+test <- df[ind1,]
+train <- df[-ind1,]
+ind2 <- createDataPartition(train$day, p = (80/95), list = TRUE)
+```
+
+**Step 4:** Train ridge regression models for different values of lambda. The models are fitted with the training data set and then RMSE is evaluated with the validation set.
+
+```{r step2_4, message=FALSE}
+ridge_mod <- train(arr_delay ~ day + hour + month + dep_time + sched_dep_time + dep_delay + sched_arr_time + distance +
+                     temp + dewp + humid + wind_dir + wind_speed + precip + pressure + visib +
+                     wind_dir_t_wind_speed + temp_t_humid + wind_speed_t_humid, 
+                   data = train, 
+                   method = rdg_reg,
+                   trControl = trainControl(method = "repeatedcv", repeats = 1,
+                                            index = ind2,
+                                            indexOut = list(c(1:nrow(train))[-unlist(ind2)]) ))
+
+ridge_mod$bestTune
+ridge_mod$results[,1:2]
+```
+
+The value for lambda that results in the lowest RMSE in the validation data set is 1.
+
+**Step 5:** Use the best lambda from step 4 to predict the test data set and evaluate the RMSE.
+
+```{r step2_5, message=FALSE}
+ridge_pred <- predict(ridge_mod, test)
+RMSE(ridge_pred, test$arr_delay)
+```
+

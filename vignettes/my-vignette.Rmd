@@ -1,0 +1,82 @@
+---
+title: "Linear regression with the linreg function"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+The linreg function fits a linear regression model using ordinary least squares.
+
+### Step 1: Load the package
+Start by loading the *smlm* package.
+```{r setup}
+library(smlm)
+library(gridExtra)
+```
+
+
+### Step 2: Load the data
+We will use the R built-in data set iris.
+```{r data}
+data("iris")
+head(iris)
+```
+
+### Step 3: Create a formula
+Create a formula with a dependent variable and at least one independent variable. The following formula uses *Petal.Length* as the dependent variable, and *Species* as the independent variable.
+```{r formula}
+myFormula <- Petal.Length~Species
+```
+
+### Step 4: Fit a linear regression model
+Call the linreg function to fit a linear regression model.
+```{r fit}
+linreg_mod <- linreg(myFormula, data=iris)
+```
+
+### Step 5: Print the coefficients
+Print out the estimated coefficients of the fitted model.
+```{r print}
+linreg_mod$print()
+```
+
+### Step 6: Plot the residuals versus the fitted values
+Plot the residuals and the standardized residuals versus the fitted values.
+```{r plot}
+linreg_mod$plot()
+```
+
+### Step 7: Retrieve the residuals
+Retrieve the residuals by using *resid()*.
+```{r resid}
+res <- linreg_mod$resid()
+head(res)
+```
+
+### Step 8: Retrieve the predicted values
+Retrieve the predicted values by using *pred()*.
+```{r pred}
+pred_val <- linreg_mod$pred()
+head(pred_val)
+```
+
+### Step 9: Retrieve the coefficient
+Retrieve the estimated coefficients by using *coef()*.
+```{r coef}
+coefs <- linreg_mod$coef()
+head(coefs)
+```
+
+### Step 10: Print out a summary of the fitted model
+Print out a summary of the fitted model.
+```{r summary}
+linreg_mod$summary()
+```
