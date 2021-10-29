@@ -1,4 +1,4 @@
-Package: smrid
+Package: bonuslab
 Title: Ridge Regression
 Version: 0.0.0.9000
 Authors@R: c(
@@ -20,8 +20,8 @@ Depends:
   githubinstall,
   gridExtra,
 VignetteBuilder: knitr
-URL: https://github.com/Elmahi92/smrid
-BugReports: https://github.com/Elmahi92/smrid/issues
+URL: https://github.com/simal451/bonuslab
+BugReports: https://github.com/simal451/bonuslab/issues
 Suggests: 
     testthat (>= 3.0.0),
     knitr,

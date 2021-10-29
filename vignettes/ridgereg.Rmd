@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 **Step 1:** Load all the necessary packages.
 
 ```{r setup, message=FALSE, warning=FALSE}
-library(smrid)
+library(bonuslab)
 library(caret)
 library(MASS)
 library(leaps)
@@ -53,7 +53,7 @@ forward_mod <- train(medv ~ ., data = train, method = "leapForward")
 
 ```{r step3c, message=FALSE}
 rdg_reg <- list(type = "Regression",
-                library = "smrid",
+                library = "bonuslab",
                 loop = NULL)
 
 rdg_reg$parameters <- data.frame(parameter = c("lambda"),
@@ -106,7 +106,7 @@ The ridge regression model results in the lowest RMSE, and hence fits the test d
 library(nycflights13)
 library(tidyverse)
 library(caret)
-library(smrid)
+library(bonuslab)
 
 # Loading and merging the data sets flights and weather
 df_flights <- nycflights13::flights
