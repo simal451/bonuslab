@@ -1,7 +1,5 @@
 #' A reference class representing av ridge regression model
 #'
-#' @import ggplot2
-#' @import gridExtra
 #'
 #' @field beta_hat A matrix containing the estimated coefficients
 #' @field y_hat A matrix containing the fitted values
@@ -16,8 +14,8 @@
 #' @field data_name A character vector containing the name of the data frame
 #' @return An object of class linreg
 #' @examples
-#' ridgereg(iris, as.formula("Petal.Length ~ Species"))
-#' ridgereg(iris, as.formula("Petal.Length ~ Sepal.Width + Sepal.Length"))
+#' ridgereg(as.formula("Petal.Length ~ Species"), iris)
+#' ridgereg(as.formula("Petal.Length ~ Sepal.Width + Sepal.Length"), iris)
 #' @references \url{https://en.wikipedia.org/wiki/Ridge_regression}
 #' @export ridgereg
 ridgereg <- setRefClass(
@@ -138,7 +136,7 @@ ridgereg <- setRefClass(
                     plot.title = element_text(hjust = 0.5)
                 )
 
-            grid.arrange(p1, p2)
+            gridExtra::grid.arrange(p1,p2)
         },
         resid = function() {
             "Returns a vector with the residuals"

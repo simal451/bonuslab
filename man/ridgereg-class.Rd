@@ -54,8 +54,8 @@ A reference class representing av ridge regression model
 }}
 
 \examples{
-ridgereg(iris, as.formula("Petal.Length ~ Species"))
-ridgereg(iris, as.formula("Petal.Length ~ Sepal.Width + Sepal.Length"))
+ridgereg(as.formula("Petal.Length ~ Species"), iris)
+ridgereg(as.formula("Petal.Length ~ Sepal.Width + Sepal.Length"), iris)
 }
 \references{
 \url{https://en.wikipedia.org/wiki/Ridge_regression}

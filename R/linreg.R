@@ -1,7 +1,5 @@
 #' A reference class representing av linear regression model
 #'
-#' @import ggplot2
-#' @import gridExtra
 #'
 #' @field beta_hat A matrix containing the estimated coefficients
 #' @field y_hat A matrix containing the fitted values
@@ -82,7 +80,7 @@ linreg <- setRefClass("linreg",
                             theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                                   plot.title = element_text(hjust = 0.5))
 
-                          grid.arrange(p1,p2)
+                          gridExtra::grid.arrange(p1,p2)
                         },
                         resid = function() {
                           "Returns a vector with the residuals"

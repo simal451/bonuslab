@@ -1,4 +1,4 @@
 library(testthat)
-library(ridgereg)
+library(bonuslab)
 
-test_check("ridgereg")
+test_check("bonuslab")

@@ -64,7 +64,7 @@ RMSE(ridge_pred, test$medv)
 
 ## ----step2_1, message=FALSE---------------------------------------------------
 library(nycflights13)
-library(tidyverse)
+library(tidyr)
 library(caret)
 library(bonuslab)
 

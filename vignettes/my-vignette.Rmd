@@ -1,5 +1,5 @@
 ---
-title: "Linear regression with the linreg function"
+title: "my-vignette"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{my-vignette}
@@ -18,8 +18,7 @@ The linreg function fits a linear regression model using ordinary least squares.
 ### Step 1: Load the package
 Start by loading the *smlm* package.
 ```{r setup}
-library(smlm)
-library(gridExtra)
+library(bonuslab)
 ```
 
 

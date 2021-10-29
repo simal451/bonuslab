@@ -104,7 +104,7 @@ The ridge regression model results in the lowest RMSE, and hence fits the test d
 
 ```{r step2_1, message=FALSE}
 library(nycflights13)
-library(tidyverse)
+library(tidyr)
 library(caret)
 library(bonuslab)
 

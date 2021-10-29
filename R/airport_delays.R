@@ -1,4 +1,5 @@
 library(dplyr)
+library(tidyr)
 library(plotly)
 library(seriation)
 library(nycflights13)
@@ -66,6 +67,7 @@ visualize_airport_delays <- function() {
 
   filghts_dept_from <- filghts_dept_from[, 1:3]
   mat <- tidyr::spread(filghts_dept_from, from, arr_delay)
+  mat <- as.data.frame(mat)
   rownames(mat) <- mat$to
   mat_ <- mat[2:4]
   rownames(mat_) <- mat$to
